@@ -16,15 +16,13 @@ InfoFrame::InfoFrame(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::InfoFrame)
 {
+    ui->setupUi(this);
     //Setup GPIO
     m_gpio_handler = new QGPIOHandler;
 
     m_input_pin = 40;
     m_gpio_handler->reservePin(m_input_pin);
     m_gpio_handler->setPinDirection(m_input_pin, QGPIOHandler::DIRECTION_INPUT);
-
-    setFixedHeight(400);
-    ui->setupUi(this);
 
     connect (m_gpio_handler, SIGNAL(newPinValueReady(int)), this, SLOT(updatePinValue(int)));
 
