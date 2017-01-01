@@ -6,6 +6,7 @@
 #include "unistd.h"
 
 #include <QNetworkInterface>
+#include <QDebug>
 
 static const QString led_icons[]    = { ":images/led_off.png", ":images/led_on.png"};
 
@@ -17,6 +18,7 @@ InfoFrame::InfoFrame(QWidget *parent) :
     ui(new Ui::InfoFrame)
 {
     ui->setupUi(this);
+    qDebug() << "Setting up GPIO\n";
     //Setup GPIO
     m_gpio_handler = new QGPIOHandler;
 
@@ -26,6 +28,7 @@ InfoFrame::InfoFrame(QWidget *parent) :
 
     connect (m_gpio_handler, SIGNAL(newPinValueReady(int)), this, SLOT(updatePinValue(int)));
 
+    qDebug() << "Fetching IP address\n";
     //Display the public IP of the DaliBox
     QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
 
