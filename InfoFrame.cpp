@@ -23,8 +23,6 @@ InfoFrame::InfoFrame(QWidget *parent) :
     m_gpio_handler->reservePin(m_input_pin);
     m_gpio_handler->setPinDirection(m_input_pin, QGPIOHandler::DIRECTION_INPUT);
 
-    switch_status = OFF;
-
     setFixedHeight(400);
     ui->setupUi(this);
 
@@ -35,9 +33,9 @@ InfoFrame::InfoFrame(QWidget *parent) :
 
     for(int nIter=0; nIter<list.count(); nIter++)
     {
-        //if(list[nIter].flags() & QNetworkInterface::IsPointToPoint)
-         if (list[nIter].addressEntries().size() > 0 && list[nIter].addressEntries()[0].ip().protocol() == QAbstractSocket::IPv4Protocol )
-         ui->ipAddress->setText(list[nIter].addressEntries()[0].ip().toString());
+         if(list[nIter].flags() & QNetworkInterface::IsPointToPoint)
+         	if (list[nIter].addressEntries().size() > 0 && list[nIter].addressEntries()[0].ip().protocol() == QAbstractSocket::IPv4Protocol )
+         		ui->ipAddress->setText(list[nIter].addressEntries()[0].ip().toString());
     }
 
     show();

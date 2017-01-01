@@ -23,7 +23,6 @@ private slots:
 
 private:
     Ui::InfoFrame *ui;
-    int switch_status;
 
     QGPIOHandler *m_gpio_handler;
     int m_input_pin;

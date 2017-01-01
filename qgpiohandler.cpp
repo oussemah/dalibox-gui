@@ -11,32 +11,9 @@
 
 #define GPIO_EXPORT_FILE_PATH   "/sys/class/gpio/export"
 #define GPIO_UNEXPORT_FILE_PATH "/sys/class/gpio/unexport"
-#define GPIO_DIR_FILE_PATH      "/sys/class/gpio/pio%ID_HERE%/direction"
-#define GPIO_VAL_FILE_PATH      "/sys/class/gpio/pio%ID_HERE%/value"
-#define GPIO_EDGE_FILE_PATH     "/sys/class/gpio/pio%ID_HERE%/edge"
-
-static QString& kID_2_ICPin(int kid)
-{
-    QString icpin="";
-    if (kid < 32) {
-        icpin = "A"+QString::number(kid);
-        return icpin;
-    }
-    if (kid < 64) {
-        icpin = "B"+QString::number(kid - 32);
-        return icpin;
-    }
-    if (kid < 96) {
-        icpin = "C"+QString::number(kid - 64);
-        return icpin;
-    }
-    if (kid < 128) {
-        icpin = "D"+QString::number(kid - 96);
-        return icpin;
-    }
-    icpin = "E"+QString::number(kid - 96);
-    return icpin;
-}
+#define GPIO_DIR_FILE_PATH      "/sys/class/gpio/gpio%ID_HERE%/direction"
+#define GPIO_VAL_FILE_PATH      "/sys/class/gpio/gpio%ID_HERE%/value"
+#define GPIO_EDGE_FILE_PATH     "/sys/class/gpio/gpio%ID_HERE%/edge"
 
 QGPIOHandler::QGPIOHandler(QObject *parent) : QObject(parent)
 {
@@ -53,8 +30,9 @@ QGPIOHandler::~QGPIOHandler(void)
 
 int QGPIOHandler::setPinDirection(int pin, int direction)
 {
-    QString dir_file_path = GPIO_DIR_FILE_PATH;
-    dir_file_path.replace("%ID_HERE%", kID_2_ICPin(pin));
+    QString dir_file_path =QString(GPIO_DIR_FILE_PATH);
+    dir_file_path.replace("%ID_HERE%", QString::number(pin));
+
 
     QFile file(dir_file_path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -67,10 +45,10 @@ int QGPIOHandler::setPinDirection(int pin, int direction)
     {
         out << "in";
         QString val_file_path = GPIO_VAL_FILE_PATH;
-        val_file_path.replace("%ID_HERE%", kID_2_ICPin(pin));
+        val_file_path.replace("%ID_HERE%", QString::number(pin));
         m_watcher->addPath(val_file_path);
         QString edge_file_path = GPIO_EDGE_FILE_PATH;
-        edge_file_path.replace("%ID_HERE%", kID_2_ICPin(pin));
+        edge_file_path.replace("%ID_HERE%", QString::number(pin));
         QFile file_edge(edge_file_path);
         if (!file_edge.open(QIODevice::WriteOnly | QIODevice::Text)) {
             qDebug() << QString("Error while enabling interrupts on input pin ").append(QString::number(pin));
@@ -96,7 +74,7 @@ int QGPIOHandler::setPinDirection(int pin, int direction)
 int QGPIOHandler::setPinValue(int pin, int value)
 {
     QString val_file_path = GPIO_VAL_FILE_PATH;
-    val_file_path.replace("%ID_HERE%", kID_2_ICPin(pin));
+    val_file_path.replace("%ID_HERE%", QString::number(pin));
 
     QFile file(val_file_path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -123,7 +101,7 @@ int QGPIOHandler::setPinValue(int pin, int value)
 int QGPIOHandler::readPinValue(int pin)
 {
     QString val_file_path = GPIO_VAL_FILE_PATH;
-    val_file_path.replace("%ID_HERE%", kID_2_ICPin(pin));
+    val_file_path.replace("%ID_HERE%", QString::number(pin));
 
     QFile file(val_file_path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
