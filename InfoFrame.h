@@ -17,7 +17,7 @@ public:
     explicit InfoFrame(QWidget *parent = 0);
     ~InfoFrame();
 
-private slots:
+public slots:
     void updatePinValue(int pin);
     void updateVariableValue(int value);
 

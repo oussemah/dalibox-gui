@@ -2,6 +2,7 @@
 #include <QTextStream>
 
 #include "mainwindow.h"
+#include "InfoFrameDBusAdaptor.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -20,6 +21,12 @@ MainWindow::MainWindow(QWidget *parent) :
     centralWidget->setLayout(layout);
     
     this->setCentralWidget(centralWidget);
+
+    new InfoFrameDBusAdaptor((InfoFrame*)central_frame);
+
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    connection.registerObject("/DaliBoxGUI", (InfoFrame*)central_frame);
+    connection.registerService("org.DaliBox.GUIInterface");
 
     centralWidget->show();
 

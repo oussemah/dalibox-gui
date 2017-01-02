@@ -6,7 +6,9 @@
 
 greaterThan(QT_MAJOR_VERSION, 4): cache
 
-QT       += core gui network
+QT       += core gui network dbus
+
+DBUS_ADAPTORS += InfoFrame.xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,11 +30,13 @@ RCC_DIR = GeneratedFiles
 SOURCES += main.cpp\
         mainwindow.cpp \
     qgpiohandler.cpp \
-    InfoFrame.cpp
+    InfoFrame.cpp \
+    InfoFrameDBusAdaptor.cpp
 
 HEADERS  += mainwindow.h \
     qgpiohandler.h \
-    InfoFrame.h
+    InfoFrame.h \
+    InfoFrameDBusAdaptor.h
 
 FORMS    += \
     mainwindow.ui \
@@ -40,3 +44,6 @@ FORMS    += \
 
 RESOURCES += \
     controller.qrc
+
+OTHER_FILES += \
+    InfoFrame.xml
