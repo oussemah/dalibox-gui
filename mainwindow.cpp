@@ -1,5 +1,5 @@
 #include <QVBoxLayout>
-#include <QTextStream>
+#include <QProcess>
 
 #include "mainwindow.h"
 #include "InfoFrameDBusAdaptor.h"
@@ -24,12 +24,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     new InfoFrameDBusAdaptor((InfoFrame*)central_frame);
 
+    /* Print the current DBus session address */
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    qDebug() << QString("Using DBus ID : ").append(env.value("DBUS_SESSION_BUS_ADDRESS", "None"));
+
     QDBusConnection connection = QDBusConnection::sessionBus();
     connection.registerObject("/DaliBoxGUI", (InfoFrame*)central_frame);
     connection.registerService("org.DaliBox.GUIInterface");
 
     centralWidget->show();
-
 }
 
 MainWindow::~MainWindow()
