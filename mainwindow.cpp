@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(ShowReadings()));
-    dataTimer.start(4000); // Interval 0 means to refresh as fast as possible
+    dataTimer.start(9000); // Interval 0 means to refresh as fast as possible
     centralWidget->show();
 }
 

@@ -4,5 +4,6 @@
         <file>images/led_on.png</file>
         <file>images/background.png</file>
         <file>images/logo.png</file>
+        <file>images/logo_enexis.png</file>
     </qresource>
 </RCC>
