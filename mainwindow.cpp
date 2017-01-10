@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
       timeTicker->setTimeFormat("%h:%m:%s");
       central_frame->xAxis->setTicker(timeTicker);
       central_frame->axisRect()->setupFullAxesBox();
-      central_frame->yAxis->setRange(-1.2, 1.2);
+      central_frame->yAxis->setRange(-400, 400);
 
       // make left and bottom axes transfer their ranges to right and top axes:
       connect(central_frame->xAxis, SIGNAL(rangeChanged(QCPRange)), central_frame->xAxis2, SLOT(setRange(QCPRange)));
@@ -68,7 +68,7 @@ MainWindow::~MainWindow()
     delete centralWidget;
 }
 
-void MainWindow::realtimeDataSlot()
+void MainWindow::realtimeDataSlot(int voltage1, int voltage 2)
 {
   static QTime time(QTime::currentTime());
   // calculate two new data points:
@@ -77,8 +77,8 @@ void MainWindow::realtimeDataSlot()
   if (key-lastPointKey > 0.002) // at most add point every 2 ms
   {
     // add data to lines:
-    central_frame->graph(0)->addData(key, qSin(key)+qrand()/(double)RAND_MAX*1*qSin(key/0.3843));
-    central_frame->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
+    central_frame->graph(0)->addData(key, qSin(key)+qrand()/(double)RAND_MAX*1*qSin(key/0.3843) * 400);
+    central_frame->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364) * 400);
     // rescale value (vertical) axis to fit the current data:
     central_frame->graph(0)->rescaleValueAxis();
     central_frame->graph(1)->rescaleValueAxis(true);
