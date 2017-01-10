@@ -31,12 +31,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     qgpiohandler.cpp \
     InfoFrame.cpp \
-    InfoFrameDBusAdaptor.cpp
+    InfoFrameDBusAdaptor.cpp \
+    qcustomplot.cpp
 
 HEADERS  += mainwindow.h \
     qgpiohandler.h \
     InfoFrame.h \
-    InfoFrameDBusAdaptor.h
+    InfoFrameDBusAdaptor.h \
+    qcustomplot.h
 
 FORMS    += \
     mainwindow.ui \

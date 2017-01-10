@@ -5,6 +5,8 @@
 
 
 #include "InfoFrame.h"
+#include "qcustomplot.h"
+#include "QTimer"
 
 namespace Ui {
 class MainWindow;
@@ -18,12 +20,16 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void realtimeDataSlot();
+
 private:
     Ui::MainWindow *ui;
 
     QWidget *centralWidget;
 
-    QFrame *central_frame;
+    QCustomPlot *central_frame;
+    QTimer dataTimer;
 
 };
 
