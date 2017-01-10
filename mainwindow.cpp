@@ -15,51 +15,28 @@ MainWindow::MainWindow(QWidget *parent) :
 
     centralWidget = new QWidget(this);
     centralWidget->setBaseSize(800,480);
-#if 0
-    central_frame = new InfoFrame(centralWidget);
-#else
-    central_frame = new QCustomPlot(centralWidget);
 
-    QCustomPlot *customPlot = central_frame;
-
-    central_frame->addGraph(); // blue line
-      central_frame->graph(0)->setPen(QPen(QColor(40, 110, 255)));
-      central_frame->addGraph(); // red line
-      central_frame->graph(1)->setPen(QPen(QColor(255, 110, 40)));
-
-      QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-      timeTicker->setTimeFormat("%h:%m:%s");
-      central_frame->xAxis->setTicker(timeTicker);
-      central_frame->axisRect()->setupFullAxesBox();
-      central_frame->yAxis->setRange(-400, 400);
-
-      // make left and bottom axes transfer their ranges to right and top axes:
-      connect(central_frame->xAxis, SIGNAL(rangeChanged(QCPRange)), central_frame->xAxis2, SLOT(setRange(QCPRange)));
-      connect(central_frame->yAxis, SIGNAL(rangeChanged(QCPRange)), central_frame->yAxis2, SLOT(setRange(QCPRange)));
-
-      // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-      connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-      dataTimer.start(0); // Interval 0 means to refresh as fast as possible
-
-#endif
+    infoFrame = new InfoFrame(centralWidget);
 
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(central_frame);
+    layout->addWidget(infoFrame);
     centralWidget->setLayout(layout);
     
     this->setCentralWidget(centralWidget);
 
-    new InfoFrameDBusAdaptor((InfoFrame*)central_frame);
+    new InfoFrameDBusAdaptor((InfoFrame*)infoFrame);
 
     /* Print the current DBus session address */
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     qDebug() << QString("Using DBus ID : ").append(env.value("DBUS_SESSION_BUS_ADDRESS", "None"));
 
     QDBusConnection connection = QDBusConnection::sessionBus();
-    connection.registerObject("/DaliBoxGUI", (InfoFrame*)central_frame);
+    connection.registerObject("/DaliBoxGUI", (InfoFrame*)infoFrame);
     connection.registerService("org.DaliBox.GUIInterface");
 
-
+    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(ShowReadings()));
+    dataTimer.start(4000); // Interval 0 means to refresh as fast as possible
     centralWidget->show();
 }
 
@@ -68,7 +45,7 @@ MainWindow::~MainWindow()
     delete centralWidget;
 }
 
-void MainWindow::realtimeDataSlot(int voltage1, int voltage 2)
+void MainWindow::realtimeDataSlot()
 {
   static QTime time(QTime::currentTime());
   // calculate two new data points:
@@ -102,4 +79,32 @@ void MainWindow::realtimeDataSlot(int voltage1, int voltage 2)
     lastFpsKey = key;
     frameCount = 0;*/
   }
+}
+
+void MainWindow::ShowReadings()
+{
+    central_frame = new QCustomPlot(centralWidget);
+
+    central_frame->addGraph(); // blue line
+    central_frame->graph(0)->setPen(QPen(QColor(40, 110, 255)));
+    central_frame->addGraph(); // red line
+    central_frame->graph(1)->setPen(QPen(QColor(255, 110, 40)));
+
+    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+    timeTicker->setTimeFormat("%h:%m:%s");
+    central_frame->xAxis->setTicker(timeTicker);
+    central_frame->axisRect()->setupFullAxesBox();
+    central_frame->yAxis->setRange(-400, 400);
+
+    // make left and bottom axes transfer their ranges to right and top axes:
+    connect(central_frame->xAxis, SIGNAL(rangeChanged(QCPRange)), central_frame->xAxis2, SLOT(setRange(QCPRange)));
+    connect(central_frame->yAxis, SIGNAL(rangeChanged(QCPRange)), central_frame->yAxis2, SLOT(setRange(QCPRange)));
+
+    disconnect(&dataTimer, SIGNAL(timeout()), this, SLOT(ShowReadings()));
+    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+    dataTimer.start(0); // Interval 0 means to refresh as fast as possible
+
+    centralWidget->layout()->removeWidget(infoFrame);
+    centralWidget->layout()->addWidget(central_frame);
 }

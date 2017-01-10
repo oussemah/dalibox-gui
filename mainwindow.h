@@ -22,12 +22,14 @@ public:
 
 public slots:
     void realtimeDataSlot();
+    void ShowReadings();
 
 private:
     Ui::MainWindow *ui;
 
     QWidget *centralWidget;
 
+    QFrame      *infoFrame;
     QCustomPlot *central_frame;
     QTimer dataTimer;
 
